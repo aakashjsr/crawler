@@ -9,13 +9,25 @@
                 min-height: 280px;
             }
 
-            .collection {
+
+            @media screen and (min-width: 992px) {
+  .collection {
                 width: 50%;
                 margin-left: auto;
                 margin-right: auto;
                 border-radius: 1%;
             }
+}
 
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 600px) {
+ .collection {
+                width: 90%;
+                margin-left: auto;
+                margin-right: auto;
+                border-radius: 1%;
+            }
+}
     </style>
 </head>
 
