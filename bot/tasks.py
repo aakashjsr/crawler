@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from crawler.celery import celery_app
 from bot.models import Item
+from celery import signals
 
 
 def process(driver, products):
@@ -46,14 +47,15 @@ def process(driver, products):
     print(removed_list)
 
 
-@celery_app.task
-def run(products):
-    print("Got Task...")
-    # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
-    driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
+@celery_app.task(bind=True, max_retries=5)
+@signals.task_failure.connect
+def run(self, products, *args, **kwargs):
     try:
+        print("Got Task...")
+        # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
+        driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
         process(driver, products)
-    except Exception as e:
-        print(e)
-    driver.quit()
-    print("Job Complete")
+        driver.quit()
+        print("Job Complete")
+    except Exception as exc:
+        self.retry(args=[*args, kwargs], countdown=2)

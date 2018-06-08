@@ -1,0 +1,168 @@
+<html>
+<head>
+    <title>Status Notifier</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+            .card {
+                min-height: 280px;
+            }
+
+            .collection {
+                width: 50%;
+                margin-left: auto;
+                margin-right: auto;
+                border-radius: 1%;
+            }
+
+    </style>
+</head>
+
+<body>
+<div class="">
+    <nav>
+        <div class="nav-wrapper deep-purple ">
+            <a href="/" class="brand-logo"> &nbsp;Status Notifier</a>
+
+            <ul id="nav-mobile" class="right">
+                <li onclick="openPage('product')" data-position="bottom" data-tooltip="Manage Products"
+                    class="tooltipped">
+                    <a class="btn-floating pulse"><i class="material-icons">shopping_basket</i></a>
+                </li>
+                <li onclick="openPage('bot')" data-position="bottom" data-tooltip="View bot status" class="tooltipped">
+                    <a class="btn-floating pulse"><i class="material-icons">adb</i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    {% if message %}
+    <div class="collection">
+        <div class="collection-item light-green lighten-4 center">{{message}}</div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="card">
+                <div class="card-content black-text white">
+                    <span class="card-title center"><b>Product Status</b></span>
+
+                    <div class="row">
+                        <div class="col s2"><i class="material-icons blue-text">shopping_cart</i></div>
+                        <div class="col s4">Total Products</div>
+                        <div class="col s4">{{total}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col s2"><i class="material-icons green-text">verified_user</i></div>
+                        <div class="col s4">Available Products</div>
+                        <div class="col s4">{{available}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col s2"><i class="material-icons yellow-text">warning</i></div>
+                        <div class="col s4">Out of Stock Products</div>
+                        <div class="col s4">{{out_of_stock}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col s2"><i class="material-icons red-text">error</i></div>
+                        <div class="col s4">Removed Products</div>
+                        <div class="col s4">{{removed}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m6">
+            <div class="card">
+                <div class="card-content black-text white center">
+                    <span class="card-title center"><b>Back in stock</b></span>
+                    <br>
+                    <div class="row center">
+                        <a class="waves-effect waves-light btn-large green" onclick="processTrigger('back_in_stock')"><i
+                                class="material-icons right">track_changes</i>Trigger</a>
+                    </div>
+                    <br>
+                    <h6>Triggers bot to check if out of stock items are back in stock</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="card">
+                <div class="card-content black-text white center">
+                    <span class="card-title center"><b>All Product Checker</b></span>
+                    <br>
+                    <div class="row center">
+                        <a class="waves-effect waves-light btn-large green" onclick="processTrigger('all')"><i
+                                class="material-icons right">track_changes</i>Trigger</a>
+                    </div>
+                    <br>
+                    <h6>Triggers bot to check for out of stock and removed products</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m6">
+            <div class="card">
+                <div class="card-content black-text white center">
+                    <span class="card-title center"><b>Category Wise Checker</b></span>
+                    <form>
+
+                        <div class="input-field col s12">
+                            <select id="category_val">
+                                <option value="" disabled selected>Choose your option</option>
+                                {% for category in categories %}
+                                <option value="{{category}}">{{category}}</option>
+                                {% endfor %}
+                            </select>
+                            <label>Product Category</label>
+                        </div>
+                    </form>
+                    <div class="row center">
+                        <a class="waves-effect waves-light btn-large green" onclick="processTrigger('category')"><i
+                                class="material-icons right">track_changes</i>Trigger</a>
+                    </div>
+
+                    <h6>Triggers bot to check out of stock products for a category</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script>
+        function processTrigger(trigger) {
+            var url = "http://" + location.host + "/process/?trigger=" + trigger;
+
+            if (trigger == "category") {
+                var cat = document.getElementById("category_val").value;
+                console.log(cat);
+                url += "&category=" + cat;
+            }
+            location.href = url;
+        }
+
+        function openPage(item) {
+            if (item == "bot") {
+                window.open("http://" + location.hostname + ":" + "5555");
+            }
+            if (item == "product") {
+                window.open("http://" + location.host + "/admin/bot/item/");
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.tooltipped');
+    var instances = M.Tooltip.init(elems, {exitDelay: 0});
+    elems = document.querySelectorAll('select');
+    instances = M.FormSelect.init(elems, {});
+
+  });
+
+
+
+
+</script>
+</html>

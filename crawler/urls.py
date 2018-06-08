@@ -16,8 +16,10 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from bot.views import test
+from bot.views import *
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^test/', test),
+    url(r'^process/', process),
+    url(r'^', index),
 ]
