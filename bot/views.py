@@ -12,33 +12,36 @@ def process(request, *args, **kwargs):
         items = Item.objects.filter(status="available").values_list('item_code', flat=True)
         items = list(set(items))
         start = 0
-        run.delay(["LC61847-2"])
-        # while True:
-        #     temp = items[start: start+100]
-        #     if not len(temp):
-        #         break
-        #     start = start + 100
-        #     # print(temp)
-        #     run.delay(temp)
+        while True:
+            temp = items[start: start+100]
+            if not len(temp):
+                break
+            start = start + 100
+            run.delay(temp, False)
 
     if trigger == "category":
         items = Item.objects.filter(
             status="available", category=request.GET.get("category")
         ).values_list('item_code', flat=True)
         items = list(set(items))
-        print(items)
         start = 0
-        run.delay(["LC61847-2"])
-        # while True:
-        #     temp = items[start: start+100]
-        #     if not len(temp):
-        #         break
-        #     start = start + 100
-        #     # print(temp)
-        #     run.delay(temp)
+        while True:
+            temp = items[start: start+100]
+            if not len(temp):
+                break
+            start = start + 100
+            run.delay(temp, False)
 
     if trigger == "back_in_stock":
-        pass
+        items = Item.objects.filter(status="out_of_stock").values_list('item_code', flat=True)
+        items = list(set(items))
+        start = 0
+        while True:
+            temp = items[start: start + 100]
+            if not len(temp):
+                break
+            start = start + 100
+            run.delay(temp, True)
 
     return render(request, 'index.html', {
         "total": Item.objects.count(),

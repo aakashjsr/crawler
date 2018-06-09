@@ -5,9 +5,10 @@ from bot.models import Item
 from celery import signals
 
 
-def process(driver, products):
+def process(driver, products, find_out_of_stock=False):
     removed_list = []
     out_of_stock_list = []
+    back_in_stock_list = []
     url = "http://www.dropship-clothes.com/"
     driver.get(url)
     for product_code in products:
@@ -30,31 +31,45 @@ def process(driver, products):
                     if len(out_of_stock_button):
                         print("{} - {} is out of stock".format(product_code, size.text))
                         out_of_stock_list.append((product_code, size.text.split(")")[1]))
+                    else:
+                        # item is back in stock
+                        if find_out_of_stock:
+                            back_in_stock_list.append((product_code, size.text.split(")")[1]))
                 except:
                     # When its a hidden element
                     pass
         else:
             print("item {} not found".format(product_code))
             removed_list.append(product_code)
-    Item.objects.filter(item_code__in=removed_list).update(status="removed")
-    for item in out_of_stock_list:
-        product = Item.objects.filter(item_code=item[0].lower(), size=item[1].lower())
-        if product.exists():
-            product = product.first()
-            product.status = "out_of_stock"
-            product.save()
-    print(out_of_stock_list)
-    print(removed_list)
+
+    if find_out_of_stock:
+        # Mark available items
+        for item in out_of_stock_list:
+            product = Item.objects.filter(item_code=item[0].lower(), size=item[1].lower())
+            if product.exists():
+                product = product.first()
+                product.status = "available"
+                product.save()
+    else:
+        # Mark Out of Stock items
+        for item in out_of_stock_list:
+            product = Item.objects.filter(item_code=item[0].lower(), size=item[1].lower())
+            if product.exists():
+                product = product.first()
+                product.status = "out_of_stock"
+                product.save()
+        # Mark Back in Stock items
+        Item.objects.filter(item_code__in=removed_list).update(status="removed")
 
 
 @celery_app.task(bind=True, max_retries=5)
 @signals.task_failure.connect
-def run(self, products, *args, **kwargs):
+def run(self, products, check_back_in_stock, *args, **kwargs):
     try:
         print("Got Task...")
         # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
         driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
-        process(driver, products)
+        process(driver, products, check_back_in_stock)
         driver.quit()
         print("Job Complete")
     except Exception as exc:
