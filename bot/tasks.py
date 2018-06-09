@@ -59,7 +59,7 @@ def process(driver, products, find_out_of_stock=False):
 
     if find_out_of_stock:
         # Mark available items
-        for item in out_of_stock_list:
+        for item in back_in_stock_list:
             product = Item.objects.filter(item_code=item[0].lower(), size=item[1].lower())
             if product.exists():
                 product = product.first()
