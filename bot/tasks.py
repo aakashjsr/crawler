@@ -63,7 +63,6 @@ def process(driver, products, find_out_of_stock=False):
 
 
 @celery_app.task(bind=True, max_retries=5)
-@signals.task_failure.connect
 def run(self, products, check_back_in_stock, *args, **kwargs):
     try:
         print("Got Task...")
@@ -73,4 +72,4 @@ def run(self, products, check_back_in_stock, *args, **kwargs):
         driver.quit()
         print("Job Complete")
     except Exception as exc:
-        self.retry(args=[*args, kwargs], countdown=2)
+        self.retry(exc=exc, countdown=2)
