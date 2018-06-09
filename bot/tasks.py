@@ -13,7 +13,7 @@ def process(driver, products, find_out_of_stock=False):
     url = "http://www.dropship-clothes.com/"
 
     for product_code in products:
-        time.sleep(0.5)
+        time.sleep(1)
         driver.get(url)
         print("Looking into item {}".format(product_code))
         s_time = time.time()
