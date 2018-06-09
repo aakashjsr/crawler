@@ -11,8 +11,9 @@ def process(driver, products, find_out_of_stock=False):
     out_of_stock_list = []
     back_in_stock_list = []
     url = "http://www.dropship-clothes.com/"
-    driver.get(url)
+
     for product_code in products:
+        driver.get(url)
         print("Looking into item {}".format(product_code))
         s_time = time.time()
         e_time = time.time()
