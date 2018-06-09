@@ -1,3 +1,4 @@
+import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from crawler.celery import celery_app
@@ -13,7 +14,17 @@ def process(driver, products, find_out_of_stock=False):
     driver.get(url)
     for product_code in products:
         print("Looking into item {}".format(product_code))
-        search_box = driver.find_element_by_class_name('search_input')
+        s_time = time.time()
+        e_time = time.time()
+        search_box = None
+        while e_time - s_time < 10:
+            try:
+                search_box = driver.find_element_by_class_name('search_input')
+            except:
+                print("Refinding search box")
+            else:
+                break
+        start = time.time()
         search_box.click()
         search_box.clear()
         search_box.send_keys(product_code)
@@ -41,6 +52,8 @@ def process(driver, products, find_out_of_stock=False):
         else:
             print("item {} not found".format(product_code))
             removed_list.append(product_code)
+        end = time.time()
+        print("Took {} seconds to process {}".format(end-start, product_code))
 
     if find_out_of_stock:
         # Mark available items
@@ -72,4 +85,5 @@ def run(self, products, check_back_in_stock, *args, **kwargs):
         driver.quit()
         print("Job Complete")
     except Exception as exc:
-        self.retry(exc=exc, countdown=2)
+        raise Exception(str(exc))
+        # self.retry(exc=exc, countdown=2)
