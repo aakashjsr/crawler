@@ -21,6 +21,7 @@ def process(driver, products, find_out_of_stock=False):
             try:
                 search_box = driver.find_element_by_class_name('search_input')
             except:
+                driver.save_screenshot("/tmp/{}.png".format(time.time()))
                 print("Refinding search box")
             else:
                 break
