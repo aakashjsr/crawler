@@ -11,21 +11,24 @@ def process(driver, products, find_out_of_stock=False):
     out_of_stock_list = []
     back_in_stock_list = []
     url = "http://www.dropship-clothes.com/"
+    item_number = 1
 
     for product_code in products:
         start = time.time()
         delay = 0
+        print("Processing Item number : {}".format(item_number))
         print("Looking into item {}".format(product_code))
         search_box = None
         while True:
             try:
+                print("sleeping for {} seconds.".format(delay))
                 time.sleep(delay)
                 driver.get(url)
                 search_box = driver.find_element_by_class_name('search_input')
             except:
                 delay += 1
                 driver.save_screenshot("/tmp/{}.png".format(time.time()))
-                print("Refinding search box")
+                print("relocating search box")
             else:
                 break
         search_box.click()
@@ -56,6 +59,7 @@ def process(driver, products, find_out_of_stock=False):
             removed_list.append(product_code)
         end = time.time()
         print("Took {} seconds to process {}".format(end-start, product_code))
+        item_number += 1
 
     if find_out_of_stock:
         # Mark available items
@@ -77,15 +81,15 @@ def process(driver, products, find_out_of_stock=False):
         Item.objects.filter(item_code__in=removed_list).update(status="removed")
 
 
-@celery_app.task(bind=True, max_retries=5)
-def run(self, products, check_back_in_stock, *args, **kwargs):
+@celery_app.task()
+def run(products, check_back_in_stock):
+    print("Got Task...")
+    # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
     try:
-        print("Got Task...")
-        # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
         driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
+    except:
+        run(products, check_back_in_stock)
+    else:
         process(driver, products, check_back_in_stock)
         driver.quit()
-        print("Job Complete")
-    except Exception as exc:
-        raise Exception(str(exc))
-        # self.retry(exc=exc, countdown=2)
+    print("Job Complete")
