@@ -13,6 +13,7 @@ def process(driver, products, find_out_of_stock=False):
     url = "http://www.dropship-clothes.com/"
 
     for product_code in products:
+        time.sleep(3)
         driver.get(url)
         print("Looking into item {}".format(product_code))
         s_time = time.time()
@@ -31,7 +32,7 @@ def process(driver, products, find_out_of_stock=False):
         search_box.clear()
         search_box.send_keys(product_code)
         search_box.send_keys(Keys.ENTER)
-
+        time.sleep(1)
         items = driver.find_elements_by_class_name('pic')
         if len(items):
             item = items[0]
