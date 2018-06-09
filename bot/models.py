@@ -10,6 +10,7 @@ class Item(models.Model):
     status = models.CharField(max_length=15, choices=[
         ("available", "available"), ("out_of_stock", "out_of_stock"), ("removed", "removed")
     ])
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return "{} - {}".format(self.item_code, self.size)
