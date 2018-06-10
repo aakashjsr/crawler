@@ -1,4 +1,5 @@
-import time, datetime, json
+import time, datetime
+from datetime import timezone
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from crawler.celery import celery_app
@@ -86,7 +87,7 @@ def process(task, driver, products, find_out_of_stock=False):
         Item.objects.filter(item_code__in=removed_list).update(status="removed")
 
     task.status = "complete"
-    task.ended_at = datetime.datetime.now()
+    task.ended_at = datetime.datetime.now(timezone.utc)
     task.execution_time = "{} mins".format((task.ended_at - task.started_at).total_seconds()/60)
     task.save()
 
