@@ -7,6 +7,7 @@ from bot.models import Item, Task
 
 
 def process(task, driver, products, find_out_of_stock=False):
+    products_length = len(products)
     removed_list = []
     out_of_stock_list = []
     back_in_stock_list = []
@@ -63,7 +64,7 @@ def process(task, driver, products, find_out_of_stock=False):
             removed_list.append(product_code)
         end = time.time()
         print("Took {} seconds to process {}".format(end-start, product_code))
-        task.percent = item_number
+        task.percent = int((100 * item_number) / products_length)
         task.save()
         item_number += 1
 
@@ -88,7 +89,7 @@ def process(task, driver, products, find_out_of_stock=False):
 
     task.status = "complete"
     task.ended_at = datetime.datetime.now(timezone.utc)
-    task.execution_time = "{} mins".format((task.ended_at - task.started_at).total_seconds()/60)
+    task.execution_time = "{0:.2f} mins".format((task.ended_at - task.started_at).total_seconds()/60)
     task.save()
 
 
