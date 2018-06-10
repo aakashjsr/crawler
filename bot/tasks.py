@@ -14,9 +14,10 @@ def process(driver, products, find_out_of_stock=False):
     item_number = 1
 
     for product_code in products:
+        print("")
         start = time.time()
         delay = 0
-        print("Processing Item number : {}".format(item_number))
+        print("Processing Item number : {} / 100.".format(item_number))
         print("Looking into item {}".format(product_code))
         search_box = None
         while True:
@@ -38,22 +39,26 @@ def process(driver, products, find_out_of_stock=False):
         items = driver.find_elements_by_class_name('pic')
         if len(items):
             item = items[0]
-            item.click()
-            sizes = driver.find_elements_by_class_name('sale_property')
-            for size in sizes:
-                try:
-                    size.click()
-                    out_of_stock_button = driver.find_elements_by_class_name("add_out_of_stock")
-                    if len(out_of_stock_button):
-                        print("{} - {} is out of stock".format(product_code, size.text))
-                        out_of_stock_list.append((product_code, size.text.split(")")[1]))
-                    else:
-                        # item is back in stock
-                        if find_out_of_stock:
-                            back_in_stock_list.append((product_code, size.text.split(")")[1]))
-                except:
-                    # When its a hidden element
-                    pass
+            try:
+                item.click()
+            except:
+                print("item not visible. {}".format(item))
+            else:
+                sizes = driver.find_elements_by_class_name('sale_property')
+                for size in sizes:
+                    try:
+                        size.click()
+                        out_of_stock_button = driver.find_elements_by_class_name("add_out_of_stock")
+                        if len(out_of_stock_button):
+                            print("{} - {} is out of stock".format(product_code, size.text))
+                            out_of_stock_list.append((product_code, size.text.split(")")[1]))
+                        else:
+                            # item is back in stock
+                            if find_out_of_stock:
+                                back_in_stock_list.append((product_code, size.text.split(")")[1]))
+                    except:
+                        # When its a hidden element
+                        pass
         else:
             print("item {} not found".format(product_code))
             removed_list.append(product_code)
