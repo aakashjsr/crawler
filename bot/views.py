@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from bot.tasks import run
-from bot.models import Item
+from bot.models import Item, Task
 from django.shortcuts import render
 
 
@@ -17,7 +17,8 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + 100
-            run.delay(temp, False)
+            t = Task.objects.create(item_codes=str(temp), check_in_stock=False, status="new")
+            run.delay(t.id)
 
     if trigger == "category":
         items = Item.objects.filter(
@@ -30,7 +31,8 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + 100
-            run.delay(temp, False)
+            t = Task.objects.create(item_codes=str(temp), check_in_stock=False, status="new")
+            run.delay(t.id)
 
     if trigger == "back_in_stock":
         items = Item.objects.filter(status="out_of_stock").values_list('item_code', flat=True)
@@ -41,7 +43,8 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + 100
-            run.delay(temp, True)
+            t = Task.objects.create(item_codes=str(temp), check_in_stock=True, status="new")
+            run.delay(t.id)
 
     return render(request, 'index.html', {
         "total": Item.objects.count(),

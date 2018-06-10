@@ -92,18 +92,19 @@ def process(task, driver, products, find_out_of_stock=False):
 
 
 @celery_app.task()
-def run(products, check_back_in_stock, task=None):
+def run(task_id):
     print("Got Task...")
-    if not task:
-        task = Task.objects.create(item_codes=str(products), check_in_stock=check_back_in_stock, status="running")
+    task = Task.objects.get(task_id)
+    task.status = "running"
+    task.save()
     # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
     try:
         driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
     except:
-        run(products, check_back_in_stock, task)
+        run(task_id)
     else:
         try:
-            process(task, driver, products, check_back_in_stock)
+            process(task, driver, list(task.item_codes), task.check_in_stock)
         except:
             task.status = "failed"
             task.save()
