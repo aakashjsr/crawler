@@ -10,7 +10,7 @@ class ItemAdmin(admin.ModelAdmin):
 
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ("id", "started_at", "check_in_stock", "percent", "status")
+    list_display = ("id", "started_at", "ended_at", "execution_time", "check_in_stock", "percent", "status")
     list_filter = ("status", ("started_at", DateTimeRangeFilter))
 
 
