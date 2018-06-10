@@ -103,6 +103,9 @@ def run(task_id):
     except:
         run(task_id)
     else:
+        data = task.item_codes[1: len(task.item_codes) - 1]
+        data = data.split(',')
+        data = [i.strip().replace("'", "") for i in data]
         try:
             process(task, driver, json.loads(task.item_codes), task.check_in_stock)
         except:

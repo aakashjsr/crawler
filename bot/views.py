@@ -17,7 +17,7 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + 100
-            t = Task.objects.create(item_codes=json.dumps(temp), check_in_stock=False, status="new")
+            t = Task.objects.create(item_codes=str(temp), check_in_stock=False, status="new")
             run.delay(t.id)
 
     if trigger == "category":
@@ -31,7 +31,7 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + 100
-            t = Task.objects.create(item_codes=json.dumps(temp), check_in_stock=False, status="new")
+            t = Task.objects.create(item_codes=str(temp), check_in_stock=False, status="new")
             run.delay(t.id)
 
     if trigger == "back_in_stock":
@@ -43,7 +43,7 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + 100
-            t = Task.objects.create(item_codes=json.dumps(temp), check_in_stock=True, status="new")
+            t = Task.objects.create(item_codes=str(temp), check_in_stock=True, status="new")
             run.delay(t.id)
 
     return render(request, 'index.html', {
