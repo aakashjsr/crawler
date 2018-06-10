@@ -2,11 +2,10 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from crawler.celery import celery_app
-from bot.models import Item
-from celery import signals
+from bot.models import Item, Task
 
 
-def process(driver, products, find_out_of_stock=False):
+def process(task, driver, products, find_out_of_stock=False):
     removed_list = []
     out_of_stock_list = []
     back_in_stock_list = []
@@ -14,10 +13,9 @@ def process(driver, products, find_out_of_stock=False):
     item_number = 1
 
     for product_code in products:
-        print("")
         start = time.time()
         delay = 0
-        print("Processing Item number : {} / 100.".format(item_number))
+        print("\n\nProcessing Item number : {} / 100.".format(item_number))
         print("Looking into item {}".format(product_code))
         search_box = None
         while True:
@@ -65,6 +63,8 @@ def process(driver, products, find_out_of_stock=False):
         end = time.time()
         print("Took {} seconds to process {}".format(end-start, product_code))
         item_number += 1
+        task.percent = item_number
+        task.save()
 
     if find_out_of_stock:
         # Mark available items
@@ -85,16 +85,25 @@ def process(driver, products, find_out_of_stock=False):
         # Mark Back in Stock items
         Item.objects.filter(item_code__in=removed_list).update(status="removed")
 
+    task.status = "complete"
+    task.save()
+
 
 @celery_app.task()
-def run(products, check_back_in_stock):
+def run(products, check_back_in_stock, task=None):
     print("Got Task...")
+    if not task:
+        task = Task.objects.create(item_codes=str(products), check_in_stock=check_back_in_stock, status="running")
     # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
     try:
         driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
     except:
-        run(products, check_back_in_stock)
+        run(products, check_back_in_stock, task)
     else:
-        process(driver, products, check_back_in_stock)
+        try:
+            process(task, driver, products, check_back_in_stock)
+        except:
+            task.status = "failed"
+            task.save()
         driver.quit()
     print("Job Complete")

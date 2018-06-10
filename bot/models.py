@@ -14,3 +14,14 @@ class Item(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.item_code, self.size)
+
+
+class Task(models.Model):
+    percent = models.IntegerField(default=0)
+    status = models.CharField(max_length=25)
+    started_at = models.DateTimeField(auto_now_add=True)
+    item_codes = models.CharField(max_length=5000)
+    check_in_stock = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "{} - {}".format(self.id, self.percent)
