@@ -94,7 +94,7 @@ def process(task, driver, products, find_out_of_stock=False):
 @celery_app.task()
 def run(task_id):
     print("Got Task...")
-    task = Task.objects.get(task_id)
+    task = Task.objects.get(id=task_id)
     task.status = "running"
     task.save()
     # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
