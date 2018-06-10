@@ -62,9 +62,9 @@ def process(task, driver, products, find_out_of_stock=False):
             removed_list.append(product_code)
         end = time.time()
         print("Took {} seconds to process {}".format(end-start, product_code))
-        item_number += 1
         task.percent = item_number
         task.save()
+        item_number += 1
 
     if find_out_of_stock:
         # Mark available items
