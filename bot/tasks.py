@@ -107,7 +107,7 @@ def run(task_id):
         data = data.split(',')
         data = [i.strip().replace("'", "") for i in data]
         try:
-            process(task, driver, json.loads(task.item_codes), task.check_in_stock)
+            process(task, driver, data, task.check_in_stock)
         except:
             task.status = "failed"
             task.save()
