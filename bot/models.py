@@ -19,7 +19,9 @@ class Item(models.Model):
 class Task(models.Model):
     percent = models.IntegerField(default=0)
     status = models.CharField(max_length=25)
-    started_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(auto_now=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
+    execution_time = models.CharField(max_length=25, null=True)
     item_codes = models.CharField(max_length=5000)
     check_in_stock = models.BooleanField(default=False)
 
