@@ -108,8 +108,9 @@ def run(task_id):
         data = [i.strip().replace("'", "") for i in data]
         try:
             process(task, driver, data, task.check_in_stock)
-        except:
+        except Exception as e:
             task.status = "failed"
             task.save()
+            raise
         driver.quit()
     print("Job Complete")
