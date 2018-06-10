@@ -14,42 +14,42 @@ for row in readCSV:
     except:
         pass
     try:
-        if row[2].index('<td>s </td>'):
+        if row[2].index('<td>S </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="s"))
     except:
         pass
     try:
-        if row[2].index('<td>m </td>'):
+        if row[2].index('<td>M </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="m"))
     except:
         pass
     try:
-        if row[2].index('<td>l </td>'):
+        if row[2].index('<td>L </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="l"))
     except:
         pass
     try:
-        if row[2].index('<td>xl </td>'):
+        if row[2].index('<td>Xl </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xl"))
     except:
         pass
     try:
-        if row[2].index('<td>xxl </td>'):
+        if row[2].index('<td>XXl </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xxl"))
     except:
         pass
     try:
-        if row[2].index('<td>xxxl </td>'):
+        if row[2].index('<td>XXXl </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xxxl"))
     except:
         pass
     try:
-        if row[2].index('<td>xxxxl </td>'):
+        if row[2].index('<td>XXXXl </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xxxxl"))
     except:
         pass
     try:
-        if row[2].index('<td>xxxxxl </td>'):
+        if row[2].index('<td>XXXXXl </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xxxxxl"))
     except:
         pass
