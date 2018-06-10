@@ -1,4 +1,4 @@
-import time, datetime
+import time, datetime, json
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from crawler.celery import celery_app
@@ -104,7 +104,7 @@ def run(task_id):
         run(task_id)
     else:
         try:
-            process(task, driver, list(task.item_codes), task.check_in_stock)
+            process(task, driver, json.loads(task.item_codes), task.check_in_stock)
         except:
             task.status = "failed"
             task.save()
