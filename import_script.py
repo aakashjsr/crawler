@@ -29,27 +29,27 @@ for row in readCSV:
     except:
         pass
     try:
-        if row[2].index('<td>Xl </td>'):
+        if row[2].index('<td>XL </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xl"))
     except:
         pass
     try:
-        if row[2].index('<td>XXl </td>'):
+        if row[2].index('<td>XXL </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xxl"))
     except:
         pass
     try:
-        if row[2].index('<td>XXXl </td>'):
+        if row[2].index('<td>XXXL </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xxxl"))
     except:
         pass
     try:
-        if row[2].index('<td>XXXXl </td>'):
+        if row[2].index('<td>XXXXL </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xxxxl"))
     except:
         pass
     try:
-        if row[2].index('<td>XXXXXl </td>'):
+        if row[2].index('<td>XXXXXL </td>'):
             items_list.append(Item(item_code=row[0], status="available", size="xxxxxl"))
     except:
         pass
