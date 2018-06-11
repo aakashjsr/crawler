@@ -60,7 +60,7 @@ def process_csv(path):
             item_hash[item.item_code] = []
         item_hash[item.item_code].append(item.size)
 
-    fp = open(path)
+    fp = open(path, encoding='utf-8')
     reader = csv.DictReader(fp)
     data = [i for i in reader]
     data.pop(0)
