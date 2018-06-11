@@ -1,5 +1,5 @@
 from django.db import models
-
+from bot.utils import process_csv
 
 class Item(models.Model):
     item_code = models.CharField(max_length=25)
@@ -26,3 +26,15 @@ class Task(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.id, self.percent)
+
+
+class ProductList(models.Model):
+    file_link = models.FileField()
+    uploaded_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.uploaded_on)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        process_csv(self.file_link.path)

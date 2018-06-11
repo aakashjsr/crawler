@@ -139,3 +139,6 @@ REDIS_PORT = os.environ.get("REDIS_PORT", "6379")
 BROKER_URL = 'redis://{}:{}'.format(REDIS_HOST, REDIS_PORT)
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = BROKER_URL
+
+
+MEDIA_ROOT = "/tmp/"

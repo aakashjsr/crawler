@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bot.models import Item, Task
+from bot.models import Item, Task, ProductList
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
 
@@ -14,5 +14,10 @@ class TaskAdmin(admin.ModelAdmin):
     list_filter = ("status", ("started_at", DateTimeRangeFilter))
 
 
+class ProductListkAdmin(admin.ModelAdmin):
+    list_display = ("uploaded_on", "file_link")
+
+
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Task, TaskAdmin)
+admin.site.register(ProductList, ProductListkAdmin)
