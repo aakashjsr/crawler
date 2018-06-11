@@ -1,4 +1,4 @@
-import json
+from django.http import HttpResponseRedirect
 from bot.tasks import run
 from bot.models import Item, Task
 from django.shortcuts import render
@@ -64,3 +64,8 @@ def index(request, *args, **kwargs):
         "removed": Item.objects.filter(status="removed").count(),
         "categories": Item.objects.values_list("category", flat=True).distinct()
     })
+
+
+def retry(request, *args, **kwargs):
+    run.delay(request.GET.get("task_id"))
+    return HttpResponseRedirect("/admin/")

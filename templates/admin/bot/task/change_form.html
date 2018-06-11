@@ -1,0 +1,7 @@
+{% extends "admin/change_form.html" %}
+{% block form_top %}
+<div align="right">
+  <input type="button" value="Retry" onclick='location.href="/retry/?task_id={{original.id}}"'>
+</div>
+
+{% endblock %}

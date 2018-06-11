@@ -22,6 +22,7 @@ class Task(models.Model):
     execution_time = models.CharField(max_length=25, null=True)
     item_codes = models.CharField(max_length=5000)
     check_in_stock = models.BooleanField(default=False)
+    exception_message = models.TextField(max_length=5000)
 
     def __str__(self):
         return "{} - {}".format(self.id, self.percent)

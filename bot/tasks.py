@@ -20,7 +20,7 @@ def process(task, driver, products, find_out_of_stock=False):
         print("\n\nProcessing Item number : {} / 100.".format(item_number))
         print("Looking into item {}".format(product_code))
         search_box = None
-        while True:
+        while delay < 11:
             try:
                 print("sleeping for {} seconds.".format(delay))
                 time.sleep(delay)
@@ -98,6 +98,7 @@ def run(task_id):
     print("Got Task...")
     task = Task.objects.get(id=task_id)
     task.status = "running"
+    task.started_at = datetime.datetime.now(timezone.utc)
     task.save()
     # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
     try:
@@ -112,6 +113,7 @@ def run(task_id):
             process(task, driver, data, task.check_in_stock)
         except Exception as e:
             task.status = "failed"
+            task.exception_message = str(e)
             task.save()
             raise
         driver.quit()
