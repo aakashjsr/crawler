@@ -48,6 +48,11 @@ def get_sizes(body):
             size_list.append("xxxxxl")
     except:
         pass
+    try:
+        if body.index('<td>XXXXXXL </td>'):
+            size_list.append("xxxxxxl")
+    except:
+        pass
     return size_list
 
 
