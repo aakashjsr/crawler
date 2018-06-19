@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^retry/', retry),
     url(r'^process/', process),
+    url(r'^download/', csv_download),
     url(r'^', index),
 ]

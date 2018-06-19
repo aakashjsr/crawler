@@ -5,52 +5,52 @@ def get_sizes(body):
     size_list = []
     try:
         if body.index('<td>XS </td>'):
-            size_list.append("xs")
+            size_list.append("XS")
     except:
         pass
     try:
         if body.index('<td>S </td>'):
-            size_list.append("s")
+            size_list.append("S")
     except:
         pass
     try:
         if body.index('<td>M </td>'):
-            size_list.append("m")
+            size_list.append("M")
     except:
         pass
     try:
         if body.index('<td>L </td>'):
-            size_list.append("l")
+            size_list.append("L")
     except:
         pass
     try:
         if body.index('<td>XL </td>'):
-            size_list.append("xl")
+            size_list.append("XL")
     except:
         pass
     try:
         if body.index('<td>XXL </td>'):
-            size_list.append("xxl")
+            size_list.append("XXL")
     except:
         pass
     try:
         if body.index('<td>XXXL </td>'):
-            size_list.append("xxxl")
+            size_list.append("XXXL")
     except:
         pass
     try:
         if body.index('<td>XXXXL </td>'):
-            size_list.append("xxxxl")
+            size_list.append("XXXXL")
     except:
         pass
     try:
         if body.index('<td>XXXXXL </td>'):
-            size_list.append("xxxxxl")
+            size_list.append("XXXXXL")
     except:
         pass
     try:
         if body.index('<td>XXXXXXL </td>'):
-            size_list.append("xxxxxxl")
+            size_list.append("XXXXXXL")
     except:
         pass
     return size_list

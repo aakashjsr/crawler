@@ -1,6 +1,7 @@
 from django.db import models
 from bot.utils import process_csv
 
+
 class Item(models.Model):
     item_code = models.CharField(max_length=25)
     size = models.CharField(max_length=25)

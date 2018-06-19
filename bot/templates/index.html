@@ -178,14 +178,28 @@
                 <div class="col s12 m6">
                     <div class="card">
                         <div class="card-content black-text white center">
-                            <span class="card-title center"><b>Back in stock</b></span>
-                            <br>
+                            <span class="card-title center"><b>Export Product CSV</b></span>
+                            <form>
+
+                                <div class="input-field col s12">
+                                    <select id="csv_val">
+                                        <option value="" disabled selected>Choose your option</option>
+
+                                        <option value="available">Available</option>
+                                        <option value="removed">Removed</option>
+                                        <option value="out_of_stock">Out Of Stock</option>
+                                        <option value="back_in_stock_today">Back In Stock Today</option>
+
+                                    </select>
+                                    <label>Product Status</label>
+                                </div>
+                            </form>
                             <div class="row center">
-                                <a class="waves-effect waves-light btn-large green" onclick="processTrigger('back_in_stock')"><i
-                                    class="material-icons right">track_changes</i>Trigger</a>
+                                <a class="waves-effect waves-light btn-large green" onclick="downloadCsv()"><i
+                                    class="material-icons right">track_changes</i>Download</a>
                             </div>
-                            <br>
-                            <h6>Triggers bot to check if out of stock items are back in stock</h6>
+
+                            <h6>Export products according to their status in CSV</h6>
                         </div>
                     </div>
                 </div>
@@ -211,25 +225,14 @@
                 <div class="col s12 m6">
                     <div class="card">
                         <div class="card-content black-text white center">
-                            <span class="card-title center"><b>Category Wise Checker</b></span>
-                            <form>
-
-                                <div class="input-field col s12">
-                                    <select id="category_val">
-                                        <option value="" disabled selected>Choose your option</option>
-                                        {% for category in categories %}
-                                        <option value="{{category}}">{{category}}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <label>Product Category</label>
-                                </div>
-                            </form>
+                            <span class="card-title center"><b>Back in stock</b></span>
+                            <br>
                             <div class="row center">
-                                <a class="waves-effect waves-light btn-large green" onclick="processTrigger('category')"><i
+                                <a class="waves-effect waves-light btn-large green" onclick="processTrigger('back_in_stock')"><i
                                     class="material-icons right">track_changes</i>Trigger</a>
                             </div>
-
-                            <h6>Triggers bot to check out of stock products for a category</h6>
+                            <br>
+                            <h6>Triggers bot to check if out of stock items are back in stock</h6>
                         </div>
                     </div>
                 </div>
@@ -239,14 +242,16 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
     <script>
+
+        function downloadCsv() {
+            var cat = document.getElementById("csv_val").value;
+            var url = "http://" + location.host + "/download/?type=" + cat;
+            location.href = url;
+        }
+
         function processTrigger(trigger) {
             var url = "http://" + location.host + "/process/?trigger=" + trigger;
 
-            if (trigger == "category") {
-                var cat = document.getElementById("category_val").value;
-                console.log(cat);
-                url += "&category=" + cat;
-            }
             var loader = document.getElementById("loader");
 
             var elems = document.querySelectorAll(".btn-large");

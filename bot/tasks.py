@@ -60,8 +60,12 @@ def process(task, driver, products, find_out_of_stock=False):
                         # When its a hidden element
                         pass
         else:
-            print("item {} not found".format(product_code))
-            removed_list.append(product_code)
+            search_element = driver.find_elements_by_class_name('search_tit')
+            if len(search_element):
+                for element in search_element:
+                    if element.text.lower() == "not found":
+                        print("item {} not found".format(product_code))
+                        removed_list.append(product_code)
         end = time.time()
         print("Took {} seconds to process {}".format(end-start, product_code))
         task.percent = int((100 * item_number) / products_length)
@@ -71,7 +75,7 @@ def process(task, driver, products, find_out_of_stock=False):
     if find_out_of_stock:
         # Mark available items
         for item in back_in_stock_list:
-            product = Item.objects.filter(item_code=item[0].lower(), size=item[1].lower())
+            product = Item.objects.filter(item_code=item[0].lower(), size=item[1])
             if product.exists():
                 product = product.first()
                 product.status = "available"
@@ -79,7 +83,7 @@ def process(task, driver, products, find_out_of_stock=False):
     else:
         # Mark Out of Stock items
         for item in out_of_stock_list:
-            product = Item.objects.filter(item_code=item[0].lower(), size=item[1].lower())
+            product = Item.objects.filter(item_code=item[0].lower(), size=item[1])
             if product.exists():
                 product = product.first()
                 product.status = "out_of_stock"
@@ -100,8 +104,8 @@ def run(task_id):
     task.status = "running"
     task.started_at = datetime.datetime.now(timezone.utc)
     task.save()
-    # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
     try:
+        # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
         driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
     except:
         run(task_id)
