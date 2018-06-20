@@ -144,4 +144,4 @@ CELERY_ACKS_LATE = True
 
 MEDIA_ROOT = "/tmp/"
 # No of items per Task
-BATCH_SIZE = 50
+BATCH_SIZE = os.environ.get("BATCH_SIZE", 100)
