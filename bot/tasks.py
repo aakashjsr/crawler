@@ -108,7 +108,9 @@ def run(task_id):
         # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
         driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
     except:
-        run(task_id)
+        task.exception_message = "Phantom JS unavailable"
+        task.status = "failed"
+        task.save()
     else:
         data = task.item_codes[1: len(task.item_codes) - 1]
         data = data.split(',')
