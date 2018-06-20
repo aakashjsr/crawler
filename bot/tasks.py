@@ -100,11 +100,16 @@ def process(task, driver, products, find_out_of_stock=False):
 
 @celery_app.task(task_time_limit=1800, soft_time_limit=1680)
 def run(task_id):
-    print("Got Task...")
-    task = Task.objects.get(id=task_id)
-    task.status = "running"
-    task.started_at = datetime.datetime.now(timezone.utc)
-    task.save()
+    try:
+        print("Got Task...")
+        task = Task.objects.get(id=task_id)
+        task.status = "running"
+        task.started_at = datetime.datetime.now(timezone.utc)
+        task.save()
+    except Exception as e:
+        task.exception_message = str(e)
+        task.status = "failed"
+        task.save()
     try:
         # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
         driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
