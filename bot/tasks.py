@@ -97,7 +97,7 @@ def process(task, driver, products, find_out_of_stock=False):
     task.save()
 
 
-@celery_app.task()
+@celery_app.task(task_time_limit=3600)
 def run(task_id):
     print("Got Task...")
     task = Task.objects.get(id=task_id)

@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from bot.tasks import run
 from bot.models import Item, Task
 from django.shortcuts import render
+from django.conf import settings
 
 
 def process(request, *args, **kwargs):
@@ -15,10 +16,10 @@ def process(request, *args, **kwargs):
         items = list(set(items))
         start = 0
         while True:
-            temp = items[start: start+100]
+            temp = items[start: start+settings.BATCH_SIZE]
             if not len(temp):
                 break
-            start = start + 100
+            start = start + settings.BATCH_SIZE
             t = Task.objects.create(item_codes=str(temp), check_in_stock=False, status="new")
             run.delay(t.id)
 
@@ -27,10 +28,10 @@ def process(request, *args, **kwargs):
         items = list(set(items))
         start = 0
         while True:
-            temp = items[start: start + 100]
+            temp = items[start: start + settings.BATCH_SIZE]
             if not len(temp):
                 break
-            start = start + 100
+            start = start + settings.BATCH_SIZE
             t = Task.objects.create(item_codes=str(temp), check_in_stock=True, status="new")
             run.delay(t.id)
 
@@ -39,10 +40,10 @@ def process(request, *args, **kwargs):
         items = list(set(items))
         start = 0
         while True:
-            temp = items[start: start + 100]
+            temp = items[start: start + settings.BATCH_SIZE]
             if not len(temp):
                 break
-            start = start + 100
+            start = start + settings.BATCH_SIZE
             t = Task.objects.create(item_codes=str(temp), check_in_stock=True, status="new")
             run.delay(t.id)
 
