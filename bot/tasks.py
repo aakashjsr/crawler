@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from crawler.celery import celery_app
 from bot.models import Item, Task
+from celery.exceptions import SoftTimeLimitExceeded
 
 
 def process(task, driver, products, find_out_of_stock=False):
@@ -97,7 +98,7 @@ def process(task, driver, products, find_out_of_stock=False):
     task.save()
 
 
-@celery_app.task(task_time_limit=3600)
+@celery_app.task(task_time_limit=1800, soft_time_limit=1680)
 def run(task_id):
     print("Got Task...")
     task = Task.objects.get(id=task_id)
@@ -117,6 +118,10 @@ def run(task_id):
         data = [i.strip().replace("'", "") for i in data]
         try:
             process(task, driver, data, task.check_in_stock)
+        except SoftTimeLimitExceeded:
+            task.status = "failed"
+            task.exception_message = "Time limit exceeded"
+            task.save()
         except Exception as e:
             task.status = "failed"
             task.exception_message = str(e)
