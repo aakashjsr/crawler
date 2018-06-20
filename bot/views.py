@@ -10,6 +10,7 @@ def process(request, *args, **kwargs):
     trigger = request.GET.get("trigger")
 
     if trigger == "all":
+        # Check for Available
         items = Item.objects.filter(status="available").values_list('item_code', flat=True)
         items = list(set(items))
         start = 0
@@ -19,6 +20,18 @@ def process(request, *args, **kwargs):
                 break
             start = start + 100
             t = Task.objects.create(item_codes=str(temp), check_in_stock=False, status="new")
+            run.delay(t.id)
+
+        # Check for out of stock
+        items = Item.objects.filter(status="out_of_stock").values_list('item_code', flat=True)
+        items = list(set(items))
+        start = 0
+        while True:
+            temp = items[start: start + 100]
+            if not len(temp):
+                break
+            start = start + 100
+            t = Task.objects.create(item_codes=str(temp), check_in_stock=True, status="new")
             run.delay(t.id)
 
     if trigger == "back_in_stock":
