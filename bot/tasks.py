@@ -17,7 +17,7 @@ def process(task, driver, products, find_out_of_stock=False):
     for product_code in products:
         start = time.time()
         delay = 0
-        print("\n\nProcessing Item number : {} / 100.".format(item_number))
+        print("\n\nProcessing Item number : {} / {}.".format(item_number, products_length))
         print("Looking into item {}".format(product_code))
         search_box = None
         while delay < 11:
