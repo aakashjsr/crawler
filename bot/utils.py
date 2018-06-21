@@ -73,13 +73,11 @@ def process_csv(path):
     for row in data:
         code = row.get("Handle", '').lower()
         category = row.get("Type", '').lower()
-        body = row.get("Body (HTML)", '')
-        sizes = get_sizes(body)
-        for size in sizes:
-            if item_hash.get(code) and (size in item_hash.get(code)):
-                pass
-            else:
-                item_list.append(Item(item_code=code, size=size, category=category, status="available"))
+        size = row.get("Option2 Value").strip().split(")")[-1]
+        if item_hash.get(code) and (size in item_hash.get(code)):
+            pass
+        else:
+            item_list.append(Item(item_code=code, size=size, category=category, status="available"))
 
     Item.objects.bulk_create(item_list)
     print("Created {} items.".format(len(item_list)))

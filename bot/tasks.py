@@ -52,11 +52,11 @@ def process(task, driver, products, find_out_of_stock=False):
                         out_of_stock_button = driver.find_elements_by_class_name("add_out_of_stock")
                         if len(out_of_stock_button):
                             print("{} - {} is out of stock".format(product_code, size.text))
-                            out_of_stock_list.append((product_code, size.text.split(")")[1]))
+                            out_of_stock_list.append((product_code, size.text.strip().split(")")[-1]))
                         else:
                             # item is back in stock
                             if find_out_of_stock:
-                                back_in_stock_list.append((product_code, size.text.split(")")[1]))
+                                back_in_stock_list.append((product_code, size.text.strip().split(")")[-1]))
                     except:
                         # When its a hidden element
                         pass
