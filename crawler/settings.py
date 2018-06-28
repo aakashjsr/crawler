@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'kzzzb5d63x#t2wlxazwnuvvixyr6mfcacbs^u$pk%p-t#j75-&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -145,3 +145,4 @@ CELERY_ACKS_LATE = True
 MEDIA_ROOT = "/tmp/"
 # No of items per Task
 BATCH_SIZE = int(os.environ.get("BATCH_SIZE", 100))
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 90000
