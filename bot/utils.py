@@ -56,6 +56,18 @@ def get_sizes(body):
     return size_list
 
 
+def get_data_from_stream(fp, data):
+    """
+    Handles corrupted file streams
+    """
+    reader = csv.DictReader(fp)
+    try:
+        for i in reader:
+            data.append(i)
+    except:
+        get_data_from_stream(fp, data)
+
+
 def process_csv(path):
     from bot.models import Item
     item_list = []
@@ -66,14 +78,22 @@ def process_csv(path):
         item_hash[item.item_code].append(item.size)
 
     fp = open(path, encoding='utf-8')
-    reader = csv.DictReader(fp)
-    data = [i for i in reader]
+    data = []
+    get_data_from_stream(fp, data)
     data.pop(0)
 
     for row in data:
-        code = row.get("Handle", '').lower()
+        try:
+            code = row["Handle"].lower()
+        except:
+            print("No Code . Skipping")
+            continue
         category = row.get("Type", '').lower()
-        size = row.get("Option2 Value").strip().split(")")[-1]
+        try:
+            size = row.get("Option2 Value").strip().split(")")[-1]
+        except:
+            print("No Size. Skipping")
+            continue
         if item_hash.get(code) and (size in item_hash.get(code)):
             pass
         else:
