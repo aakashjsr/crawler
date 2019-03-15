@@ -91,6 +91,9 @@ def process_csv(path):
         category = row.get("Type", '').lower()
         try:
             size = row.get("Option2 Value").strip().split(")")[-1]
+            if not size:
+                print("No Size")
+                continue
         except:
             print("No Size. Skipping")
             continue
