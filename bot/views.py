@@ -1,4 +1,4 @@
-import csv, datetime
+import csv, datetime, json
 from django.http import HttpResponseRedirect, HttpResponse
 from bot.tasks import run
 from bot.models import Item, Task
@@ -20,7 +20,7 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + settings.BATCH_SIZE
-            t = Task.objects.create(item_codes=str(temp), check_in_stock=False, status="new")
+            t = Task.objects.create(completed_items=json.dumps([]), item_codes=str(temp), check_in_stock=False, status="new")
             run.delay(t.id)
 
         # Check for out of stock
@@ -32,7 +32,7 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + settings.BATCH_SIZE
-            t = Task.objects.create(item_codes=str(temp), check_in_stock=True, status="new")
+            t = Task.objects.create(completed_items=json.dumps([]), item_codes=str(temp), check_in_stock=True, status="new")
             run.delay(t.id)
 
     if trigger == "out_of_stock":
@@ -44,7 +44,7 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + settings.BATCH_SIZE
-            t = Task.objects.create(item_codes=str(temp), check_in_stock=False, status="new")
+            t = Task.objects.create(completed_items=json.dumps([]), item_codes=str(temp), check_in_stock=False, status="new")
             run.delay(t.id)
 
     if trigger == "back_in_stock":
@@ -56,7 +56,7 @@ def process(request, *args, **kwargs):
             if not len(temp):
                 break
             start = start + settings.BATCH_SIZE
-            t = Task.objects.create(item_codes=str(temp), check_in_stock=True, status="new")
+            t = Task.objects.create(completed_items=json.dumps([]), item_codes=str(temp), check_in_stock=True, status="new")
             run.delay(t.id)
 
     return render(request, 'index.html', {
