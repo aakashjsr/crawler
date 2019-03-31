@@ -123,3 +123,9 @@ def index(request, *args, **kwargs):
 def retry(request, *args, **kwargs):
     run.delay(request.GET.get("task_id"))
     return HttpResponseRedirect("/admin/")
+
+
+def retry_all(request, *args, **kwargs):
+    for task in Task.objects.filter(status="failed"):
+        run.delay(task.id)
+    return HttpResponseRedirect("/")

@@ -1,4 +1,4 @@
-import time, datetime
+import time, datetime, json
 from datetime import timezone
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -15,6 +15,8 @@ def process(task, driver, products, find_out_of_stock=False):
     url = "https://www.dropship-clothes.com/"
     item_number = 1
 
+    completed_items = []
+
     for product_code in products:
         print(product_code)
         start = time.time()
@@ -22,7 +24,6 @@ def process(task, driver, products, find_out_of_stock=False):
         print("\n\nProcessing Item number : {} / {}.".format(item_number, products_length))
         print("Looking into item {}".format(product_code))
         search_box = None
-        retry_iterations = 0
         while delay < 11:
             try:
                 print("sleeping for {} seconds.".format(delay))
@@ -31,22 +32,21 @@ def process(task, driver, products, find_out_of_stock=False):
                 search_box = driver.find_element_by_class_name('search_input')
             except:
                 delay += 1
-                retry_iterations += 1
                 driver.save_screenshot("/tmp/task_{}_{}.png".format(task.id, time.time()))
                 print("relocating search box")
             else:
                 if not search_box:
                     delay += 1
-                    retry_iterations += 1
                 else:
                     break
         search_box.click()
         search_box.clear()
         search_box.send_keys(product_code)
         search_box.send_keys(Keys.ENTER)
-        items = driver.find_elements_by_class_name('pic')
+        items = driver.find_elements_by_class_name('pic_box')
         if len(items):
-            item = items[0]
+            search_items = items[0].find_elements_by_class_name("pic")
+            item = search_items[0]
             try:
                 item.click()
             except:
@@ -76,8 +76,10 @@ def process(task, driver, products, find_out_of_stock=False):
                         print("item {} not found".format(product_code))
                         removed_list.append(product_code)
         end = time.time()
+        completed_items.append(product_code)
         print("Took {} seconds to process {}".format(end-start, product_code))
         task.percent = int((100 * item_number) / products_length)
+        task.completed_items = json.dumps(completed_items)
         task.save()
         item_number += 1
 
@@ -129,6 +131,9 @@ def run(task_id):
         data = task.item_codes[1: len(task.item_codes) - 1]
         data = data.split(',')
         data = [i.strip().replace("'", "") for i in data]
+        completed_items = json.loads(task.completed_items)
+        if len(completed_items):
+            data = list(set(data).difference(set(completed_items)))
         try:
             process(task, driver, data, task.check_in_stock)
         except SoftTimeLimitExceeded:

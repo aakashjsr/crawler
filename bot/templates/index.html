@@ -135,6 +135,9 @@
                         <li onclick="openPage('bot')" data-position="bottom" data-tooltip="View bot status" class="tooltipped">
                             <a class="btn-floating pulse"><i class="material-icons">adb</i></a>
                         </li>
+                        <li onclick="retryAllFailedTasks()" data-position="bottom" data-tooltip="Retry Failed Tasks" class="tooltipped">
+                            <a class="btn-floating pulse"><i class="material-icons">settings_backup_restore</i></a>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -271,6 +274,10 @@
             if (item == "product") {
                 window.open("http://" + location.host + "/admin/bot/item/");
             }
+        }
+
+        function retryAllFailedTasks() {
+            window.location.href = "/retry-all/";
         }
         document.addEventListener('DOMContentLoaded', function() {
             var elems = document.querySelectorAll('.tooltipped');
