@@ -12,15 +12,17 @@ def process(task, driver, products, find_out_of_stock=False):
     removed_list = []
     out_of_stock_list = []
     back_in_stock_list = []
-    url = "http://www.dropship-clothes.com/"
+    url = "https://www.dropship-clothes.com/"
     item_number = 1
 
     for product_code in products:
+        print(product_code)
         start = time.time()
         delay = 0
         print("\n\nProcessing Item number : {} / {}.".format(item_number, products_length))
         print("Looking into item {}".format(product_code))
         search_box = None
+        retry_iterations = 0
         while delay < 11:
             try:
                 print("sleeping for {} seconds.".format(delay))
@@ -29,10 +31,15 @@ def process(task, driver, products, find_out_of_stock=False):
                 search_box = driver.find_element_by_class_name('search_input')
             except:
                 delay += 1
+                retry_iterations += 1
                 driver.save_screenshot("/tmp/task_{}_{}.png".format(task.id, time.time()))
                 print("relocating search box")
             else:
-                break
+                if not search_box:
+                    delay += 1
+                    retry_iterations += 1
+                else:
+                    break
         search_box.click()
         search_box.clear()
         search_box.send_keys(product_code)
@@ -43,6 +50,7 @@ def process(task, driver, products, find_out_of_stock=False):
             try:
                 item.click()
             except:
+                driver.save_screenshot("/tmp/task_{}_item_{}.png".format(task.id, product_code))
                 print("item not visible. {}".format(item))
             else:
                 sizes = driver.find_elements_by_class_name('sale_property')
@@ -112,7 +120,7 @@ def run(task_id):
         task.save()
     try:
         # driver = webdriver.Chrome('/Users/aakashkumardas/Downloads/chromedriver')
-        driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'], service_log_path='/tmp/ghostdriver.log')
+        driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any --load-images=no'], service_log_path='/tmp/ghostdriver.log')
     except:
         task.exception_message = "Phantom JS unavailable"
         task.status = "failed"

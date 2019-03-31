@@ -35,6 +35,18 @@ def process(request, *args, **kwargs):
             t = Task.objects.create(item_codes=str(temp), check_in_stock=True, status="new")
             run.delay(t.id)
 
+    if trigger == "out_of_stock":
+        items = Item.objects.filter(status="available").values_list('item_code', flat=True)
+        items = list(set(items))
+        start = 0
+        while True:
+            temp = items[start: start + settings.BATCH_SIZE]
+            if not len(temp):
+                break
+            start = start + settings.BATCH_SIZE
+            t = Task.objects.create(item_codes=str(temp), check_in_stock=False, status="new")
+            run.delay(t.id)
+
     if trigger == "back_in_stock":
         items = Item.objects.filter(status="out_of_stock").values_list('item_code', flat=True)
         items = list(set(items))

@@ -71,6 +71,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'crawler.wsgi.application'
 
 
+# username - crawler
+# password - crawler1234
+# db - crawlerdb
+
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 if os.environ.get("RDS_DB_NAME"):
