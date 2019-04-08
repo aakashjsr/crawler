@@ -93,7 +93,7 @@ def csv_download(request, *args, **kwargs):
         query_data = Item.objects.filter(status="removed").values("item_code", "category", "size", "status", "updated_at")
 
     print(filename)
-    if filename not in ["available.csv", "out_of_stock.csv", "back_in_stock_today.csv", "removed.csv", "out_of_stock_today"]:
+    if filename not in ["available.csv", "out_of_stock.csv", "back_in_stock_today.csv", "removed.csv", "out_of_stock_today.csv"]:
         return render(request, 'index.html', {
             "total": Item.objects.count(),
             "available": Item.objects.filter(status="available").count(),
