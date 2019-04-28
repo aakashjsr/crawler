@@ -16,8 +16,10 @@ def process(task, driver, products, find_out_of_stock=False):
     item_number = 1
 
     completed_items = []
+    import pdb
 
     for product_code in products:
+        pdb.set_trace()
         print(product_code)
         start = time.time()
         delay = 0
@@ -60,11 +62,16 @@ def process(task, driver, products, find_out_of_stock=False):
                         out_of_stock_button = driver.find_elements_by_class_name("add_out_of_stock")
                         if len(out_of_stock_button):
                             print("{} - {} is out of stock".format(product_code, size.text))
-                            out_of_stock_list.append((product_code, size.text.strip().split(")")[-1]))
+                            # (code, size, quantity)
+                            out_of_stock_list.append((product_code, size.text.strip().split(")")[-1], 0))
                         else:
                             # item is back in stock
+                            # (code, size, quantity)
+                            size_box = driver.find_element_by_id("goods_stock_num")
+                            size = int(size_box.text)
+                            print((product_code, size.text.strip().split(")")[-1], size))
                             if find_out_of_stock:
-                                back_in_stock_list.append((product_code, size.text.strip().split(")")[-1]))
+                                back_in_stock_list.append((product_code, size.text.strip().split(")")[-1], size))
                     except:
                         # When its a hidden element
                         pass

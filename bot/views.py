@@ -74,23 +74,24 @@ def csv_download(request, *args, **kwargs):
     query_data = None
     if request.GET.get("type") == "available":
         filename = "available.csv"
-        query_data = Item.objects.filter(status="available").values("item_code", "category", "size", "status", "updated_at")
+        # Download all except removed items
+        query_data = Item.objects.exclude(status="removed").values("item_code", "quantity", "size")
     if request.GET.get("type") == "out_of_stock":
         filename = "out_of_stock.csv"
-        query_data = Item.objects.filter(status="out_of_stock").values("item_code", "category", "size", "status", "updated_at")
+        query_data = Item.objects.filter(status="out_of_stock").values("item_code", "quantity", "size", "status", "updated_at")
     if request.GET.get("type") == "back_in_stock_today":
         filename = "back_in_stock_today.csv"
-        query_data = Item.objects.filter(status="available").values("item_code", "category", "size", "status", "updated_at")
+        query_data = Item.objects.filter(status="available").values("item_code", "quantity", "size", "status", "updated_at")
         t = datetime.date.today()
         query_data = query_data.filter(updated_at__gt=datetime.datetime.fromordinal(t.toordinal()))
     if request.GET.get("type") == "out_of_stock_today":
         filename = "out_of_stock_today.csv"
-        query_data = Item.objects.filter(status="out_of_stock").values("item_code", "category", "size", "status", "updated_at")
+        query_data = Item.objects.filter(status="out_of_stock").values("item_code", "quantity", "size", "status", "updated_at")
         t = datetime.date.today()
         query_data = query_data.filter(updated_at__gt=datetime.datetime.fromordinal(t.toordinal()))
     if request.GET.get("type") == "removed":
         filename = "removed.csv"
-        query_data = Item.objects.filter(status="removed").values("item_code", "category", "size", "status", "updated_at")
+        query_data = Item.objects.filter(status="removed").values("item_code", "size", "status", "updated_at")
 
     print(filename)
     if filename not in ["available.csv", "out_of_stock.csv", "back_in_stock_today.csv", "removed.csv", "out_of_stock_today.csv"]:
@@ -103,10 +104,10 @@ def csv_download(request, *args, **kwargs):
 
     fp = open("/tmp/{}".format(filename), "w")
     writer = csv.writer(fp)
-    writer.writerow(['item_code', 'category', 'size', 'status', 'updated_at'])
+    writer.writerow(['Product SKU', 'quantity'])
     rows = []
     for data in query_data:
-        rows.append([data.get('item_code'), data.get('category'), data.get('size'), data.get('status'), data.get('updated_at')])
+        rows.append(["{}{}".format(data.get('item_code'),data.get('size')), data.get('quantity')])
     writer.writerows(rows)
     fp.close()
 

@@ -4,9 +4,11 @@ from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ("item_code", "size", "category", "status", "updated_at")
-    list_filter = ("status", "size", "category", ("updated_at", DateTimeRangeFilter))
+    list_display = ("item_code", "size", "quantity", "status")
+    fields = ("item_code", "size", "quantity")
+    readonly_fields = ("updated_at", )
     search_fields = ("item_code",)
+    list_filter = ("status", )
 
 
 class TaskAdmin(admin.ModelAdmin):

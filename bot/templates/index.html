@@ -181,19 +181,15 @@
                 <div class="col s12 m6">
                     <div class="card">
                         <div class="card-content black-text white center">
-                            <span class="card-title center"><b>Export Product CSV</b></span>
+                            <span class="card-title center"><b>Export Report CSV</b></span>
                             <form>
 
                                 <div class="input-field col s12">
                                     <select id="csv_val">
                                         <option value="" disabled selected>Choose your option</option>
 
-                                        <option value="available">Available</option>
-                                        <option value="removed">Removed</option>
-                                        <option value="out_of_stock">Out Of Stock</option>
-                                        <option value="back_in_stock_today">Back In Stock Today</option>
-                                        <option value="out_of_stock_today">Out of Stock Today</option>
-
+                                        <option value="available">All products report</option>
+                                        <option value="removed">Removed products report</option>
                                     </select>
                                     <label>Product Status</label>
                                 </div>
@@ -215,7 +211,7 @@
                 <div class="col s12 m6">
                     <div class="card">
                         <div class="card-content black-text white center">
-                            <span class="card-title center"><b>All Product Checker</b></span>
+                            <span class="card-title center"><b>Inventory quantity checker</b></span>
                             <br>
                             <div class="row center">
                                 <a class="waves-effect waves-light btn-large green" onclick="processTrigger('all')"><i
@@ -229,7 +225,7 @@
                 <div class="col s12 m6">
                     <div class="card">
                         <div class="card-content black-text white center">
-                            <span class="card-title center"><b>Back in stock</b></span>
+                            <span class="card-title center"><b>Removed product checker</b></span>
                             <br>
                             <div class="row center">
                                 <a class="waves-effect waves-light btn-large green" onclick="processTrigger('back_in_stock')"><i

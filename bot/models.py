@@ -10,9 +10,10 @@ class Item(models.Model):
         ("available", "available"), ("out_of_stock", "out_of_stock"), ("removed", "removed")
     ])
     updated_at = models.DateTimeField(auto_now=True)
+    quantity = models.IntegerField(default=0)
 
     def __str__(self):
-        return "{} - {}".format(self.item_code, self.size)
+        return "{} - {}".format(self.item_code, self.size, self.quantity)
 
 
 class Task(models.Model):
